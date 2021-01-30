@@ -3,6 +3,13 @@
 	"version": "1.0",
 	"description": "Build an Extension!",
 	"permissions": ["activeTab", "declarativeContent", "storage"],
+    "content_scripts":          [ {
+        "js":       [ 
+                      "img.js"
+                    ],
+        "matches":  [   "https://meet.google.com/*"
+        ]
+    } ],
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": false
