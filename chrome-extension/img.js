@@ -3,6 +3,13 @@ window.onload = () => {
     console.log('asdf')
     snapshot()
     testSpeech()
+
+    // make paypal request on server
+    fetch('http://localhost:5000/charge').then(r => r.text()).then(result => {
+      // Result now contains the response text, do what you want...
+      console.log('ez clapperoni')
+      console.log(result)
+    })
 }
 
 const snapshot = () => {
