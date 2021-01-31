@@ -115,7 +115,14 @@ function testSpeech() {
       final_transcript = capitalize(final_transcript);
       // final_span.innerHTML = linebreak(final_transcript);
       // interim_span.innerHTML = linebreak(interim_transcript);
+
+      // CHARGE ON PAYPAL
       console.log(final_transcript)
+      if (final_transcript.trim().includes('whitespace')) {
+        console.log("CHARGE THAT MOTHER FUCK")
+      }
+
+
       if (final_transcript || interim_transcript) {
         // showButtons('inline-block');
       }
