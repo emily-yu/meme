@@ -75,12 +75,13 @@ const sendJSON = (img, parent) => {
 
   var xhr = new XMLHttpRequest();
   // TODO: add API Key here!   xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key=yourapikey");
+  
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = function () {
     // do something to response
     // console.log(this.responseText);
     console.log(this.responseText)
-    parent.innerHTML += '<p style="position:absolute; color:white">' + this.responseText + '</p>'
+    parent.innerHTML += '<pre style="position:absolute; color:white; width:50%">' + this.responseText + '</pre>'
   };
   xhr.send(json);
 }
