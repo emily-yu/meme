@@ -22,7 +22,7 @@ window.onload = () => {
   // }
 }
 
-const sendJSON = (img) => {
+const sendJSON = (img, parent) => {
   var data = {
     "requests":[
       {
@@ -31,10 +31,42 @@ const sendJSON = (img) => {
         },
         "features":[
           {
-            "type":"LABEL_DETECTION",
-            "maxResults":1
+            "maxResults": 50,
+            "type": "LANDMARK_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "FACE_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "OBJECT_LOCALIZATION"
+          },
+          {
+            "maxResults": 50,
+            "type": "LOGO_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "LABEL_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "DOCUMENT_TEXT_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "SAFE_SEARCH_DETECTION"
+          },
+          {
+            "maxResults": 50,
+            "type": "IMAGE_PROPERTIES"
+          },
+          {
+            "maxResults": 50,
+            "type": "CROP_HINTS"
           }
-        ]
+        ],
       }
     ]
   }
@@ -42,12 +74,13 @@ const sendJSON = (img) => {
   var json = JSON.stringify(data);
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key={API-KEY}");
+  // TODO: add API Key here!   xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key=yourapikey");
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = function () {
     // do something to response
     // console.log(this.responseText);
     console.log(this.responseText)
+    parent.innerHTML += '<p style="position:absolute; color:white">' + this.responseText + '</p>'
   };
   xhr.send(json);
 }
@@ -61,8 +94,13 @@ const snapshot = () => {
       console.log('executed')
 
     // get a snapshot from videos that are being displayed
+    skip = true;
     videoCandidates = document.getElementsByClassName('Gv1mTb-aTv5jf')
     for (let video of videoCandidates) {
+        if (skip) {
+          skip = false
+        }
+        else {
         console.log(video.style.display)
         if (video.style.display == "") { // process
 
@@ -79,22 +117,16 @@ const snapshot = () => {
               saveAs(blob, "output.png");
           }, "image/png");
 
-
-
-            var w=window.open('about:blank','image from canvas');
-            w.document.write("<img src='"+dataURL+"' alt='from canvas'/>");
-
-
-
             var img = document.createElement("img");
             img.src = dataURL;
 
             console.log(img) // image in base64URL
 
             // request data for meeting on server
-            // sendJSON(img.src)
-
+            sendJSON(img.src, video.parentElement)
+            break
         }
+      }
     }
   }, 5000)
 }
