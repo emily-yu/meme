@@ -1,18 +1,65 @@
 window.onload = () => {
 	console.log('loaded extension')
     console.log('asdf')
-    snapshot()
-    testSpeech()
+  var asdf = false;
+    var checkExist = setInterval(function() {
+      if (document.getElementsByClassName('I98jWb').length) {
+         console.log("Exists!");
+         clearInterval(checkExist);
+         snapshot()
+         testSpeech()
+      }
+   }, 100); // check every 100ms
 
-    // make paypal request on server
-    fetch('http://localhost:5000/charge').then(r => r.text()).then(result => {
-      // Result now contains the response text, do what you want...
-      console.log('ez clapperoni')
-      console.log(result)
-    })
+  //   /*
+  //   // make paypal request on server
+  //   fetch('http://localhost:5000/charge').then(r => r.text()).then(result => {
+  //     // Result now contains the response text, do what you want...
+  //     console.log('ez clapperoni')
+  //     console.log(result)
+  //   })
+  //   */
+  // }
 }
 
+const sendJSON = (img) => {
+  var data = {
+    "requests":[
+      {
+        "image":{
+          "content":img.split('data:image/png;base64,')[1]
+        },
+        "features":[
+          {
+            "type":"LABEL_DETECTION",
+            "maxResults":1
+          }
+        ]
+      }
+    ]
+  }
+
+  var json = JSON.stringify(data);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key={API-KEY}");
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.onload = function () {
+    // do something to response
+    // console.log(this.responseText);
+    console.log(this.responseText)
+  };
+  xhr.send(json);
+}
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 const snapshot = () => {
+  console.log('snapshottu')
+  setTimeout(
+    function() {
+      console.log('executed')
+
     // get a snapshot from videos that are being displayed
     videoCandidates = document.getElementsByClassName('Gv1mTb-aTv5jf')
     for (let video of videoCandidates) {
@@ -28,13 +75,28 @@ const snapshot = () => {
             .drawImage(video, 0, 0, canvas.width, canvas.height);
             // convert it to a usable data URL
             const dataURL = canvas.toDataURL();
+            canvas.toBlob(function(blob) {
+              saveAs(blob, "output.png");
+          }, "image/png");
+
+
+
+            var w=window.open('about:blank','image from canvas');
+            w.document.write("<img src='"+dataURL+"' alt='from canvas'/>");
+
+
 
             var img = document.createElement("img");
             img.src = dataURL;
 
             console.log(img) // image in base64URL
+
+            // request data for meeting on server
+            // sendJSON(img.src)
+
         }
     }
+  }, 5000)
 }
 
 function testSpeech() {
@@ -43,7 +105,7 @@ function testSpeech() {
   var final_transcript = '';
   var recognizing = false;
   var ignore_onend;
-  var start_timestamp;
+  // var start_timestamp;
   if (!('webkitSpeechRecognition' in window)) {
     upgrade();
   } else {
@@ -54,30 +116,11 @@ function testSpeech() {
   
     recognition.onstart = function() {
       recognizing = true;
-      // showInfo('info_speak_now');
-      // start_img.src = 'mic-animate.gif';
+
     };
   
     recognition.onerror = function(event) {
       console.log('sadge')
-      // if (event.error == 'no-speech') {
-      //   start_img.src = 'mic.gif';
-      //   showInfo('info_no_speech');
-      //   ignore_onend = true;
-      // }
-      // if (event.error == 'audio-capture') {
-      //   start_img.src = 'mic.gif';
-      //   showInfo('info_no_microphone');
-      //   ignore_onend = true;
-      // }
-      // if (event.error == 'not-allowed') {
-      //   if (event.timeStamp - start_timestamp < 100) {
-      //     showInfo('info_blocked');
-      //   } else {
-      //     showInfo('info_denied');
-      //   }
-      //   ignore_onend = true;
-      // }
     };
   
     recognition.onend = function() {
@@ -85,22 +128,6 @@ function testSpeech() {
       if (ignore_onend) {
         return;
       }
-      // start_img.src = 'mic.gif';
-      // if (!final_transcript) {
-      //   showInfo('info_start');
-      //   return;
-      // }
-      // showInfo('');
-      // if (window.getSelection) {
-      //   window.getSelection().removeAllRanges();
-      //   var range = document.createRange();
-      //   range.selectNode(document.getElementById('final_span'));
-      //   window.getSelection().addRange(range);
-      // }
-      // if (create_email) {
-      //   create_email = false;
-      //   createEmail();
-      // }
     };
   
     recognition.onresult = function(event) {
@@ -159,11 +186,6 @@ function testSpeech() {
     };
   }
   
-  // function upgrade() {
-  //   // start_button.style.visibility = 'hidden';
-  //   showInfo('info_upgrade');
-  // }
-  
   var two_line = /\n\n/g;
   var one_line = /\n/g;
   function linebreak(s) {
@@ -174,40 +196,6 @@ function testSpeech() {
   function capitalize(s) {
     return s.replace(first_char, function(m) { return m.toUpperCase(); });
   }
-  
-  // function createEmail() {
-  //   var n = final_transcript.indexOf('\n');
-  //   if (n < 0 || n >= 80) {
-  //     n = 40 + final_transcript.substring(40).indexOf(' ');
-  //   }
-  //   var subject = encodeURI(final_transcript.substring(0, n));
-  //   var body = encodeURI(final_transcript.substring(n + 1));
-  //   window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-  // }
-  
-  // function copyButton() {
-  //   if (recognizing) {
-  //     recognizing = false;
-  //     recognition.stop();
-  //   }
-  //   copy_button.style.display = 'none';
-  //   copy_info.style.display = 'inline-block';
-  //   showInfo('');
-  // }
-  
-  // function emailButton() {
-  //   if (recognizing) {
-  //     create_email = true;
-  //     recognizing = false;
-  //     recognition.stop();
-  //   } else {
-  //     createEmail();
-  //   }
-  //   email_button.style.display = 'none';
-  //   email_info.style.display = 'inline-block';
-  //   showInfo('');
-  // }
-  
   // function startButton(event) {
     if (recognizing) {
       recognition.stop();
@@ -218,36 +206,7 @@ function testSpeech() {
     recognition.lang = 'en-US'
     recognition.start();
     ignore_onend = false;
-    // final_span.innerHTML = '';
-    // interim_span.innerHTML = '';
-    // start_img.src = 'mic-slash.gif';
-    // showInfo('info_allow');
-    // showButtons('none');
-    start_timestamp = event.timeStamp;
-  // }
-  
-  // function showInfo(s) {
-  //   if (s) {
-  //     for (var child = info.firstChild; child; child = child.nextSibling) {
-  //       if (child.style) {
-  //         child.style.display = child.id == s ? 'inline' : 'none';
-  //       }
-  //     }
-  //     info.style.visibility = 'visible';
-  //   } else {
-  //     info.style.visibility = 'hidden';
-  //   }
-  // }
+    // start_timestamp = event.timeStamp;
   
   var current_style;
-  // function showButtons(style) {
-  //   if (style == current_style) {
-  //     return;
-  //   }
-  //   current_style = style;
-  //   copy_button.style.display = style;
-  //   email_button.style.display = style;
-  //   copy_info.style.display = 'none';
-  //   email_info.style.display = 'none';
-  // }
 }

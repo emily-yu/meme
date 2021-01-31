@@ -17,6 +17,9 @@ from paypalrestsdk import Invoice
 app = Flask(__name__)
 CORS(app)
 
+import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="hackuci-whitespace-4ac757eb6a08.json"
+
 @app.route("/")
 def hello():
     return 'hello'
@@ -44,5 +47,34 @@ def charge(): # send invoice through paypal
     response = invoice.send()
     return str(response)
 
+@app.route('/stats')
+def net_stats(): # get stats for all timestamps for summary of meeting
+    meetingid = request.args.get("id")
+    return 'asdf'
+
+@app.route('/imgprocess')
+def asdf():
+    path = request.args.get('path')
+    # import argparse
+    # import io
+
+    from google.cloud import vision
+
+    # """Returns web annotations given the path to an image."""
+    client = vision.ImageAnnotatorClient()
+
+    # if path.startswith('http') or path.startswith('gs:'):
+    #     image = vision.Image()
+    #     image.source.image_uri = path
+
+    # else:
+    #     with io.open(path, 'rb') as image_file:
+    #         content = image_file.read()
+
+    # image = vision.Image(content=base64.b64encode(path).decode())
+    image = vision.Image(content=base64.b64encode(path))
+    web_detection = client.web_detection(image=image).web_detection
+
+    return web_detection
 if __name__ == '__main__':
         app.run()
