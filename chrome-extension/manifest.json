@@ -15,7 +15,8 @@
     "content_scripts":          [ {
         "js":       [ 
 					  "img.js",
-					  "fs.js"
+					  "fs.js",
+					  "secret.js"
                     ],
         "matches":  [   "https://meet.google.com/*"
         ]

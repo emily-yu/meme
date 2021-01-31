@@ -75,13 +75,14 @@ const sendJSON = (img, parent) => {
 
   var xhr = new XMLHttpRequest();
   // TODO: add API Key here!   xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key=yourapikey");
-  
+  xhr.open("POST", "https://vision.googleapis.com/v1/images:annotate?key=" + API_KEY);
+
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = function () {
     // do something to response
     // console.log(this.responseText);
     console.log(this.responseText)
-    parent.innerHTML += '<pre style="position:absolute; color:white; width:50%">' + this.responseText + '</pre>'
+    parent.innerHTML += '<pre style="position:absolute; color:white; width:50%; overflow-y: scroll;height: 100%;">' + this.responseText + '</pre>'
   };
   xhr.send(json);
 }
@@ -125,7 +126,6 @@ const snapshot = () => {
 
             // request data for meeting on server
             sendJSON(img.src, video.parentElement)
-            break
         }
       }
     }
@@ -186,6 +186,13 @@ function testSpeech() {
         
         console.log(document.getElementById('charge'))
         if (!document.getElementById('charge')) {
+
+          fetch('http://localhost:5000/charge').then(r => r.text()).then(result => {
+            // Result now contains the response text, do what you want...
+            console.log('ez clapperoni')
+            console.log(result)
+          })
+
           var div=document.createElement("div"); 
           document.body.appendChild(div);
           div.style = '\
