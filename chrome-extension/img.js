@@ -140,7 +140,7 @@ function testSpeech() {
             font-weight: bold;\
           '
           div.id="charge"
-          div.innerText="imagine getting charged for saying whitespace";
+          div.innerText="someone just got charged for saying whitespace";
           
           // reset text to track
           final_transcript = ''
