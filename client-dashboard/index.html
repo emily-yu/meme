@@ -96,10 +96,95 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
+  // function renderChart(id, data) {
+  //   var options = {
+  //         series: [{
+  //           name: "Desktops",
+  //           data: data.y
+  //       }],
+  //         chart: {
+  //         height: 350,
+  //         type: 'line',
+  //         zoom: {
+  //           enabled: false
+  //         }
+  //       },
+  //       dataLabels: {
+  //         enabled: false
+  //       },
+  //       stroke: {
+  //         curve: 'straight'
+  //       },
+  //       title: {
+  //         text: data.title,
+  //         align: 'left'
+  //       },
+  //       grid: {
+  //         row: {
+  //           colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+  //           opacity: 0.5
+  //         },
+  //       },
+  //       xaxis: {
+  //         // categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+  //         categories: data.x,
+  //       }
+  //       };
+
+  //       var chart = new ApexCharts(document.querySelector("#" + id), options);
+  //       chart.render();
+  // }
+
+  // function renderMeeting(id) {
+  //   // rest of structure
+  //   document.getElementById('header').innerHTML = '<h1 class="mt-4">meeting id: ' + id + '</h1>'
+  //   // dummy charts
+  //   renderChart('chart', {
+  //     title: 'user1 (mood)',
+  //     x: ['423', '431', '432', '433'],
+  //     y: [10, 9.8, 8.1, 7.7]
+  //   })
+  //   renderChart('chart2', {
+  //     title: 'user2 (mood)',
+  //     x: ['423', '431', '432', '433'],
+  //     y: [6, 6.8, 4.1, 3.7]
+  //   })      
+  // }    
+  // renderMeeting('uoz-nvpu-ppj')
+</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-analytics.js"></script>
+<!-- <script src="/__/firebase/init.js"></script> -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-database.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyAcHnrW1RRxRwKo5ASnm6TbXEkWeDzti2A",
+    authDomain: "hackuci-whitespace.firebaseapp.com",
+    databaseURL: "https://hackuci-whitespace-default-rtdb.firebaseio.com",
+    projectId: "hackuci-whitespace",
+    storageBucket: "hackuci-whitespace.appspot.com",
+    messagingSenderId: "378509871245",
+    appId: "1:378509871245:web:c04582383d23ed2ab0fac4",
+    measurementId: "G-6HXTGRR3JY"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  var database = firebase.database();
+
   function renderChart(id, data) {
     var options = {
           series: [{
-            name: "Desktops",
+            name: "mood score",
             data: data.y
         }],
           chart: {
@@ -138,20 +223,39 @@
   function renderMeeting(id) {
     // rest of structure
     document.getElementById('header').innerHTML = '<h1 class="mt-4">meeting id: ' + id + '</h1>'
+
+    // get data from firebase
+    var data;
+    var starCountRef = firebase.database().ref(id);
+    starCountRef.on('value', (snapshot) => {
+      data = snapshot.val();
+      console.log(data)
+      Object.keys(data).some(function (k) {
+        console.log(k, data[k])
+        data[k].shift()
+        renderChart('chart', {
+          title: k + '(mood)',
+          x: ['423', '431', '432', '433', '434', '435'],
+          y: data[k]
+        })
+      })
+    });
+
     // dummy charts
-    renderChart('chart', {
-      title: 'user1 (mood)',
-      x: ['423', '431', '432', '433'],
-      y: [10, 9.8, 8.1, 7.7]
-    })
-    renderChart('chart2', {
-      title: 'user2 (mood)',
-      x: ['423', '431', '432', '433'],
-      y: [6, 6.8, 4.1, 3.7]
-    })      
+    // renderChart('chart', {
+    //   title: 'user1 (mood)',
+    //   x: ['423', '431', '432', '433'],
+    //   y: [10, 9.8, 8.1, 7.7]
+    // })
+    // renderChart('chart2', {
+    //   title: 'user2 (mood)',
+    //   x: ['423', '431', '432', '433'],
+    //   y: [6, 6.8, 4.1, 3.7]
+    // })      
   }    
   renderMeeting('uoz-nvpu-ppj')
 </script>
+
 </body>
 
 </html>
