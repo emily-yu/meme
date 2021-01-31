@@ -118,8 +118,38 @@ function testSpeech() {
 
       // CHARGE ON PAYPAL
       console.log(final_transcript)
-      if (final_transcript.trim().includes('whitespace')) {
+      final_transcript = final_transcript.replace(/ /g, '')
+      console.log(final_transcript)
+      console.log()
+      if (final_transcript.trim().toLowerCase().includes('whitespace')) {
         console.log("CHARGE THAT MOTHER FUCK")
+        
+        console.log(document.getElementById('charge'))
+        if (!document.getElementById('charge')) {
+          var div=document.createElement("div"); 
+          document.body.appendChild(div);
+          div.style = '\
+            padding-left: 30%;\
+            position: absolute;\
+            width: 100%;\
+            z-index: 10000000;\
+            padding-top: 10px;\
+            padding-bottom: 10px;\
+            background: red;\
+            color: white;\
+            font-weight: bold;\
+          '
+          div.id="charge"
+          div.innerText="imagine getting charged for saying whitespace";
+          
+          // reset text to track
+          final_transcript = ''
+
+          // remove after 5 seconds
+          setTimeout(function(){
+            document.getElementById('charge').remove();
+          }, 5000);
+        }
       }
 
 
